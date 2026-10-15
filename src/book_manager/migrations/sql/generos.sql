@@ -1,0 +1,10 @@
+INSERT INTO generos (id, nombre, descripcion) VALUES ('1', 'Programacion', 'Desarrollo de software');
+INSERT INTO generos (id, nombre, descripcion) VALUES ('2', 'Bases de Datos', 'Sistemas de almacenamiento');
+INSERT INTO generos (id, nombre, descripcion) VALUES ('3', 'Ciberseguridad', 'Seguridad informática');
+INSERT INTO generos (id, nombre, descripcion) VALUES ('4', 'Redes', 'Comunicaciones y conectividad');
+INSERT INTO generos (id, nombre, descripcion) VALUES ('5', 'Inteligencia Artificial', 'Aprendizaje automático');
+INSERT INTO generos (id, nombre, descripcion) VALUES ('6', 'Ciencia de Datos', 'Análisis de datos');
+INSERT INTO generos (id, nombre, descripcion) VALUES ('7', 'Sistemas Operativos', 'Administración de sistemas');
+INSERT INTO generos (id, nombre, descripcion) VALUES ('8', 'Desarrollo Web', 'Aplicaciones web');
+INSERT INTO generos (id, nombre, descripcion) VALUES ('9', 'Computacion en la Nube', 'Infraestructura cloud');
+INSERT INTO generos (id, nombre, descripcion) VALUES ('10', 'DevOps', 'Integración y despliegue continuo');

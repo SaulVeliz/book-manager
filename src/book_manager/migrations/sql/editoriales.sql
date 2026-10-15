@@ -1,0 +1,10 @@
+INSERT INTO editoriales (id, nombre, pais) VALUES ('1', 'Planeta', 'Argentina');
+INSERT INTO editoriales (id, nombre, pais) VALUES ('2', 'Sudamericana', 'Argentina');
+INSERT INTO editoriales (id, nombre, pais) VALUES ('3', 'Penguin', 'Estados Unidos');
+INSERT INTO editoriales (id, nombre, pais) VALUES ('4', 'Anaya', 'España');
+INSERT INTO editoriales (id, nombre, pais) VALUES ('5', 'Alfaomega', 'Mexico');
+INSERT INTO editoriales (id, nombre, pais) VALUES ('6', 'OReilly', 'Estados Unidos');
+INSERT INTO editoriales (id, nombre, pais) VALUES ('7', 'McGraw Hill', 'Estados Unidos');
+INSERT INTO editoriales (id, nombre, pais) VALUES ('8', 'Pearson', 'Reino Unido');
+INSERT INTO editoriales (id, nombre, pais) VALUES ('9', 'Kapelusz', 'Argentina');
+INSERT INTO editoriales (id, nombre, pais) VALUES ('10', 'Aique', 'Argentina');

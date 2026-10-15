@@ -1,3 +1,9 @@
+import os
+import requests
+from dotenv import load_dotenv
+from datetime import datetime
+load_dotenv()
+
 from book_manager.entities.entities import (
     Libro,
     Genero,
@@ -42,10 +48,7 @@ from book_manager.repositories.repositories import (
 
 class LibroService:
 
-    def __init__(
-        self,
-        libro_repo: LibroRepository
-    ):
+    def __init__(self,libro_repo: LibroRepository):
         self._libro_repo = libro_repo
     
     def crear(self, libro: Libro):    
@@ -66,10 +69,7 @@ class LibroService:
 
 class GeneroService:
 
-    def __init__(
-        self,
-        genero_repo: GeneroRepository
-    ):
+    def __init__(self,genero_repo: GeneroRepository):
         self._genero_repo = genero_repo
 
     def crear(self, genero: Genero):
@@ -90,10 +90,7 @@ class GeneroService:
 
 class EditorialService:
 
-    def __init__(
-        self,
-        editorial_repo: EditorialRepository
-    ):
+    def __init__(self,editorial_repo: EditorialRepository):
         self._editorial_repo = editorial_repo
     
     def crear(self, editorial: Editorial):
@@ -114,10 +111,7 @@ class EditorialService:
 
 class MonedaService:
     
-    def __init__(
-        self,
-        moneda_repo: MonedaRepository
-    ):
+    def __init__(self,moneda_repo: MonedaRepository):
         self._moneda_repo = moneda_repo
     
     def crear(self, moneda: Moneda):
@@ -138,10 +132,7 @@ class MonedaService:
 
 class TipoCotizacionService:
     
-    def __init__(
-        self,
-        tipo_repo: TipoCotizacionRepository
-    ):
+    def __init__(self,tipo_repo: TipoCotizacionRepository):
         self._tipo_repo = tipo_repo
     
     def crear(self, tipo: TipoCotizacion):
@@ -162,10 +153,7 @@ class TipoCotizacionService:
 
 class PrecioService:
 
-    def __init__(
-        self,
-        precio_repo: PrecioRepository
-    ):
+    def __init__(self,precio_repo: PrecioRepository):
         self._precio_repo = precio_repo
     
     def crear(self, precio: Precio):
@@ -186,97 +174,84 @@ class PrecioService:
 
 class StockService:
 
-    def __init__(
-        self,
-        stock_repo: StockRepository
-    ):
+    def __init__(self,stock_repo: StockRepository):
         self._stock_repo = stock_repo
 
-    def crear(self, stock: Stock):
+    def listar(self):
+        return self._stock_repo.leer_todos()
 
+    def crear(self, stock: Stock):
         return self._stock_repo.crear(stock)
 
-    def obtener_por_libro(
-        self,
-        libro_id: int
-    ):
+    def obtener_por_libro(self,libro_id: int):
+        return self._stock_repo.leer_por_libro(libro_id)
 
-        return self._stock_repo.leer_por_libro(
-            libro_id
-        )
+    def listar(self):
+        return self._stock_repo.leer_todos()
 
-    def actualizar(
-        self,
-        stock: Stock
-    ):
-
+    def actualizar(self,stock: Stock):
         return self._stock_repo.actualizar(stock)
 
-    def eliminar(
-        self,
-        libro_id: int
-    ):
-
-        return self._stock_repo.eliminar(
-            libro_id
-        )
+    def eliminar(self,libro_id: int):
+        return self._stock_repo.eliminar(libro_id)
 
 
 class CotizacionDolarService:
 
-    def __init__(
-        self,
-        cotizacion_repo: CotizacionDolarRepository
-    ):
+    def __init__(self,cotizacion_repo: CotizacionDolarRepository):
         self._cotizacion_repo = cotizacion_repo
 
-    def crear(
-        self,
-        cotizacion: CotizacionDolar
-    ):
+    def listar(self):
+        return self._cotizacion_repo.leer_todos()
 
-        return self._cotizacion_repo.crear(
-            cotizacion
-        )
+    def crear(self,cotizacion: CotizacionDolar):
 
-    def obtener(
-        self,
-        tipo_id,
-        fecha
-    ):
+        return self._cotizacion_repo.crear(cotizacion)
 
-        return self._cotizacion_repo.leer_por_tipo_y_fecha(
-            tipo_id,
-            fecha
-        )
+    def obtener(self,tipo_id,fecha):
+        return self._cotizacion_repo.leer_por_tipo_y_fecha(tipo_id,fecha)
 
-    def historico(
-        self,
-        tipo_id
-    ):
+    def historico(self,tipo_id):
+        return self._cotizacion_repo.leer_historico_por_tipo(tipo_id)
 
-        return self._cotizacion_repo.leer_historico_por_tipo(
-            tipo_id
-        )
+    def actualizar(self,cotizacion):
+        return self._cotizacion_repo.actualizar(cotizacion)
 
-    def actualizar(
-        self,
-        cotizacion
-    ):
+    def eliminar(self,tipo_id,fecha):
+        return self._cotizacion_repo.eliminar(tipo_id,fecha)
 
-        return self._cotizacion_repo.actualizar(
-            cotizacion
-        )
+    def obtener_cotizaciones(self):
+        api_url = os.getenv("API_DOLAR_URL")
+        respuesta = requests.get(api_url,timeout=10)
+        respuesta.raise_for_status()
+        datos = respuesta.json()
+        return datos
 
-    def eliminar(
-        self,
-        tipo_id,
-        fecha
-    ):
-
-        return self._cotizacion_repo.eliminar(
-            tipo_id,
-            fecha
-        )
-
-
+    def actualizar_desde_api(self):    
+            from datetime import datetime
+            datos = self.obtener_cotizaciones()
+            mapa_tipos = {
+                "oficial": 1,
+                "blue": 2,
+                "mep": 3,
+                "ccl": 4,
+                "tarjeta": 5
+            }
+            for item in datos:
+                casa = item["casa"].lower()
+                if casa not in mapa_tipos:
+                    continue
+    
+                tipo_id = mapa_tipos[casa]
+                fecha = datetime.now().date()
+                cotizacion = CotizacionDolar(
+                    tipo_id=tipo_id,
+                    fecha=fecha,
+                    valor=float(item["venta"])
+                )
+                try:
+                    self.crear(cotizacion)
+                except Exception:
+                    pass
+                
+            return len(datos)

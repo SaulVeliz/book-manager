@@ -9,6 +9,17 @@ from book_manager.repositories.repositories import (
     CotizacionDolarRepository,
 )
 
+from book_manager.repositories.repositories_sql import (
+    LibroRepositorySQL,
+    GeneroRepositorySQL,
+    EditorialRepositorySQL,
+    MonedaRepositorySQL,
+    PrecioRepositorySQL,
+    TipoCotizacionRepositorySQL,
+    StockRepositorySQL,
+    CotizacionDolarRepositorySQL
+)
+
 from book_manager.services.services import (
     LibroService,
     GeneroService,
@@ -18,15 +29,6 @@ from book_manager.services.services import (
     PrecioService,
     StockService,
     CotizacionDolarService,
-)
-
-from book_manager.preload_data.preload_data import (
-    cargar_generos,
-    cargar_editoriales,
-    cargar_monedas,
-    cargar_tipos_cotizacion,
-    cargar_libros,
-    cargar_precios,
 )
 
 
@@ -39,51 +41,60 @@ from book_manager.preload_data.csv_data import (
     cargar_editoriales,
     cargar_monedas,
     cargar_libros,
-    cargar_precios
+    cargar_precios,
+    cargar_stock,
+    cargar_tipos_cotizacion,
+    cargar_cotizaciones
 )
 
 
 def main():
 
-    genero_repo = GeneroRepository()
-    editorial_repo = EditorialRepository()
-    moneda_repo = MonedaRepository()
-    tipo_repo = TipoCotizacionRepository()
-    libro_repo = LibroRepository()
-    precio_repo = PrecioRepository()
-    stock_repo = StockRepository()
-    cotizacion_repo = CotizacionDolarRepository()
-
-
-    genero_service = GeneroService(genero_repo)
-    editorial_service = EditorialService(editorial_repo)
-    moneda_service = MonedaService(moneda_repo)
-    tipo_service = TipoCotizacionService(tipo_repo)
-    libro_service = LibroService(libro_repo)
-    precio_service = PrecioService(precio_repo)
-    stock_service = StockService(stock_repo)
-    cotizacion_service = CotizacionDolarService(cotizacion_repo)
-
-
-    for libro in cargar_libros():
-        libro_service.crear(libro)
+    libro_repo = LibroRepositorySQL()
+    genero_repo = GeneroRepositorySQL()
+    editorial_repo = EditorialRepositorySQL()
+    moneda_repo = MonedaRepositorySQL()
+    precio_repo = PrecioRepositorySQL()
+    tipo_repo = TipoCotizacionRepositorySQL()    
+    stock_repo = StockRepositorySQL()
+    cotizacion_repo = CotizacionDolarRepositorySQL()
     
-    for genero in cargar_generos():
-        genero_service.crear(genero)
+#*****************************************************
+#*****************************************************
 
+    libro_service = LibroService(libro_repo)
+    #for libro in cargar_libros():
+    #        libro_service.crear(libro)
+            
+    genero_service = GeneroService(genero_repo)
+    #for genero in cargar_generos():
+    #        genero_service.crear(genero)
 
-    for editorial in cargar_editoriales():
-        editorial_service.crear(editorial)
+    editorial_service = EditorialService(editorial_repo)
+    #for editorial in cargar_editoriales():
+    #        editorial_service.crear(editorial)
 
-    for moneda in cargar_monedas():
-        moneda_service.crear(moneda)
+    moneda_service = MonedaService(moneda_repo)
+    #for moneda in cargar_monedas():
+    #       moneda_service.crear(moneda)
 
-    for tipo in cargar_tipos_cotizacion():
-        tipo_service.crear(tipo)
+    precio_service = PrecioService(precio_repo)
+    #for precio in cargar_precios():
+    #        precio_service.crear(precio)
 
-    for precio in cargar_precios():
-        precio_service.crear(precio)
+    tipo_service = TipoCotizacionService(tipo_repo)
+    #for tipo in cargar_tipos_cotizacion():
+    #        tipo_service.crear(tipo)
 
+    stock_service = StockService(stock_repo)
+    #for stock in cargar_stock():
+    #            stock_service.crear(stock)
+
+    cotizacion_service = CotizacionDolarService(cotizacion_repo)
+    #for cotizacion in cargar_cotizaciones():
+    #    cotizacion_service.crear(cotizacion)
+
+   
 
     ui = ConsoleUI(
     libro_service,

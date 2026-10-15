@@ -1,22 +1,15 @@
-from book_manager.entities.entities import Libro
-from book_manager.entities.entities import Genero
-from book_manager.entities.entities import Editorial
-from book_manager.entities.entities import Moneda
-from book_manager.entities.entities import Precio
-from book_manager.entities.entities import TipoCotizacion
-from book_manager.entities.entities import Stock
-from book_manager.entities.entities import CotizacionDolar
 from datetime import date
-from book_manager.preload_data.csv_data import (
-    guardar_genero,
-    guardar_todos_los_generos,
-    cargar_generos,
-    guardar_todas_las_editoriales,
-    guardar_todas_las_monedas,
-    guardar_todos_los_libros,
-    guardar_todos_los_precios
+import csv
+from book_manager.entities.entities import (
+    Libro,
+    Genero,
+    Editorial,
+    Moneda,
+    Precio,
+    TipoCotizacion,
+    Stock,
+    CotizacionDolar
     )
-
 
 class ConsoleUI:
 
@@ -40,7 +33,6 @@ class ConsoleUI:
         self.stock_service = stock_service
         self.cotizacion_service = cotizacion_service
 
-
     def mostrar_menu(self):
 
         while True:
@@ -63,36 +55,27 @@ class ConsoleUI:
                 "\nSeleccione una opción: "
             )
 
-            if opcion == "1":
-                self.menu_libros()
+            if opcion == "1": self.menu_libros()
 
-            elif opcion == "2":
-                self.menu_generos()
+            elif opcion == "2": self.menu_generos()
 
-            elif opcion == "3":
-                self.menu_editoriales()
+            elif opcion == "3": self.menu_editoriales()
 
-            elif opcion == "4":
-                self.menu_monedas()
+            elif opcion == "4": self.menu_monedas()
 
-            elif opcion == "5":
-                self.menu_precios()
+            elif opcion == "5": self.menu_precios()
 
-            elif opcion == "6":
-                self.menu_tipos_cotizacion()
+            elif opcion == "6": self.menu_tipos_cotizacion()
 
-            elif opcion == "7":
-                self.menu_stock()
+            elif opcion == "7": self.menu_stock()
 
-            elif opcion == "8":
-                self.menu_cotizaciones()
+            elif opcion == "8": self.menu_cotizaciones()
 
             elif opcion == "0":
                 print("\nSaliendo...")
                 break
 
-            else:
-                print("\nOpción inválida")
+            else: print("\nOpción inválida")
                 
 
 
@@ -146,7 +129,7 @@ class ConsoleUI:
         print("\n=== STOCK ===\n")
         print("********************")
 
-        for stock in self.stock_service._stock_repo._datos.values():
+        for stock in self.stock_service.listar():
             print(stock)
 
 
@@ -155,15 +138,11 @@ class ConsoleUI:
         print("\n=== COTIZACIONES ===\n")
         print("********************")
 
-        for cotizacion in (
-            self.cotizacion_service
-            ._cotizacion_repo
-            ._datos
-            .values()
-        ):
+        for cotizacion in self.cotizacion_service.listar():
             print(cotizacion)
 
 
+#**************************************************************************
 #**************************************************************************
 #Menu con opciones de la seccion libros
 
@@ -182,26 +161,19 @@ class ConsoleUI:
 
             opcion = input("\nOpcion: ")
 
-            if opcion == "1":
-                self.listar_libros()
+            if opcion == "1": self.listar_libros()
 
-            elif opcion == "2":
-                self.agregar_libro()
+            elif opcion == "2": self.agregar_libro()
 
-            elif opcion == "3":
-                self.modificar_libro()
+            elif opcion == "3": self.modificar_libro()
 
-            elif opcion == "4":
-                self.eliminar_libro()
+            elif opcion == "4": self.eliminar_libro()
 
-            elif opcion == "5":
-                self.detalle_libro()
+            elif opcion == "5": self.detalle_libro()
 
-            elif opcion == "0":
-                break
+            elif opcion == "0": break
 
-            else:
-                print("Opcion invalida")
+            else: print("Opcion invalida")
 
 
 #Seccion CRUD Libros
@@ -209,6 +181,7 @@ class ConsoleUI:
     def agregar_libro(self):
 
         try:
+
             id_ = int(input("ID: "))
             isbn = input("ISBN: ")
             titulo = input("Titulo: ")
@@ -226,9 +199,6 @@ class ConsoleUI:
             )
 
             self.libro_service.crear(libro)
-            guardar_todos_los_libros(
-                self.libro_service.listar()
-            )
 
             print("\nLibro agregado correctamente")
 
@@ -271,10 +241,6 @@ class ConsoleUI:
 
             self.libro_service.actualizar(libro)
 
-            guardar_todos_los_libros(
-            self.libro_service.listar()
-            )
-
             print("\nLibro actualizado correctamente")
 
         except Exception as e:
@@ -291,10 +257,6 @@ class ConsoleUI:
 
             eliminado = (
                 self.libro_service.eliminar(id_)
-            )
-
-            guardar_todos_los_libros(
-            self.libro_service.listar()
             )
 
             if eliminado:
@@ -342,27 +304,17 @@ class ConsoleUI:
             print("\n=== DETALLE LIBRO ===")
             print("************************")
 
-            print(
-                f"\nTitulo: {libro.titulo}"
-            )
+            print(f"\nTitulo: {libro.titulo}")
 
-            print(
-                f"ISBN: {libro.isbn}"
-            )
+            print(f"ISBN: {libro.isbn}")
 
-            print(
-                f"Autor: {libro.autor}"
-            )
+            print(f"Autor: {libro.autor}")
 
             if genero:
-                print(
-                    f"Genero: {genero.nombre}"
-                )
+                print(f"Genero: {genero.nombre}")
 
             if editorial:
-                print(
-                    f"Editorial: {editorial.nombre}"
-                )
+                print(f"Editorial: {editorial.nombre}")
 
             precio_encontrado = None
 
@@ -391,16 +343,25 @@ class ConsoleUI:
                 if moneda:
                     codigo_moneda = moneda.codigo
 
-                print(
-                    f"Precio: {simbolo}{precio_encontrado.valor} {codigo_moneda}"
+                print(f"Precio ARS: {simbolo}{precio_encontrado.valor} {codigo_moneda}")
+
+                cotizaciones = (
+                    self.cotizacion_service.listar()
                 )
 
+                if cotizaciones:
+                    cotizacion = cotizaciones[0]
+                    usd = (
+                        precio_encontrado.valor /
+                        cotizacion.valor
+                    )
+                    print(f"Precio USD: U$S {usd:.2f}")
+
         except Exception as e:
-            print(
-                f"\nError: {e}"
-            )
+                            print(f"\nError: {e}")
 
 
+#**************************************************************************
 #**************************************************************************
 #Menu con opciones de la seccion generos
 
@@ -419,34 +380,21 @@ class ConsoleUI:
 
             opcion = input("\nOpcion: ")
 
-            if opcion == "1":
-                self.listar_generos()
+            if opcion == "1": self.listar_generos()
 
-            elif opcion == "2":
-                self.agregar_genero()
+            elif opcion == "2": self.agregar_genero()
 
-            elif opcion == "3":
-                self.modificar_genero()
+            elif opcion == "3": self.modificar_genero()
 
-            elif opcion == "4":
-                self.eliminar_genero()
+            elif opcion == "4": self.eliminar_genero()
 
-            elif opcion == "0":
-                break
+            elif opcion == "0": break
 
-            else:
-                print("Opcion invalida")
+            else: print("Opcion invalida")
 
 
 #Seccion CRUD Genero
 
-    from book_manager.preload_data.csv_data import (
-        guardar_genero
-)
-
-    from book_manager.preload_data.csv_data import (
-    guardar_genero
-)
 
     def agregar_genero(self):
 
@@ -509,11 +457,7 @@ class ConsoleUI:
                 self.genero_service.actualizar(
                     genero
                 )
-
-                guardar_todos_los_generos(
-                self.genero_service.listar()
-                )
-
+                
                 print(
                     "\nGenero actualizado correctamente"
                 )
@@ -533,18 +477,14 @@ class ConsoleUI:
                 genero = (
                     self.genero_service.eliminar(id_)
                 )
-    
-                if genero:
-                     guardar_todos_los_generos(
-                        self.genero_service.listar()
-                )
-                     
+                         
                 print("Genero eliminado")
     
             except Exception as e:
                 print(f"Error: {e}")
             
 
+#**************************************************************************
 #**************************************************************************
 #Menu con opciones de la seccion editoriales
 
@@ -563,23 +503,17 @@ class ConsoleUI:
 
             opcion = input("\nOpcion: ")
 
-            if opcion == "1":
-                self.listar_editoriales()
+            if opcion == "1": self.listar_editoriales()
 
-            elif opcion == "2":
-                self.agregar_editorial()
+            elif opcion == "2": self.agregar_editorial()
 
-            elif opcion == "3":
-                self.modificar_editorial()
+            elif opcion == "3": self.modificar_editorial()
 
-            elif opcion == "4":
-                self.eliminar_editorial()
+            elif opcion == "4": self.eliminar_editorial()
 
-            elif opcion == "0":
-                break
+            elif opcion == "0": break
 
-            else:
-                print("Opcion invalida")
+            else: print("Opcion invalida")
 
 
 #Seccion CRUD Editoriales
@@ -598,10 +532,7 @@ class ConsoleUI:
                 pais=pais
             )
 
-            self.editorial_service.crear(editorial)
-            guardar_todas_las_editoriales(
-                self.editorial_service.listar()
-            )           
+            self.editorial_service.crear(editorial)        
 
             print("\nEditorial agregado correctamente")
 
@@ -643,10 +574,6 @@ class ConsoleUI:
                 editorial
             )
 
-            guardar_todas_las_editoriales(
-                self.editorial_service.listar()
-            )
-
             print(
                 "\nEditorial actualizado correctamente"
             )
@@ -666,10 +593,6 @@ class ConsoleUI:
                 eliminado = (
                     self.editorial_service.eliminar(id_)
                 )
-
-                guardar_todas_las_editoriales(
-                    self.editorial_service.listar()
-                )
     
                 if eliminado:
                     print("Editorial eliminado")
@@ -680,6 +603,7 @@ class ConsoleUI:
                 print(f"Error: {e}")
 
 
+#**************************************************************************
 #**************************************************************************
 #Menu con opciones de la seccion monedas
 
@@ -698,23 +622,17 @@ class ConsoleUI:
 
             opcion = input("\nOpcion: ")
 
-            if opcion == "1":
-                self.listar_monedas()
+            if opcion == "1": self.listar_monedas()
 
-            elif opcion == "2":
-                self.agregar_moneda()
+            elif opcion == "2": self.agregar_moneda()
 
-            elif opcion == "3":
-                self.modificar_moneda()
+            elif opcion == "3": self.modificar_moneda()
 
-            elif opcion == "4":
-                self.eliminar_moneda()
+            elif opcion == "4": self.eliminar_moneda()
 
-            elif opcion == "0":
-                break
+            elif opcion == "0": break
 
-            else:
-                print("Opcion invalida")
+            else: print("Opcion invalida")
 
 
 #Seccion CRUD Monedas
@@ -737,17 +655,12 @@ class ConsoleUI:
 
                 self.moneda_service.crear(moneda)
 
-                guardar_todas_las_monedas(
-                    self.moneda_service.listar()
-                )
-
                 print("\nMoneda agregado correctamente")
 
             except Exception as e:
                 print(f"\nError: {e}")
 
 
-   
     def modificar_moneda(self):
 
             try:
@@ -817,6 +730,8 @@ class ConsoleUI:
                 except Exception as e:
                     print(f"Error: {e}")
 
+
+#**************************************************************************
 #**************************************************************************
 #Menu con opciones de la seccion precios
 
@@ -831,27 +746,27 @@ class ConsoleUI:
             print("2. Agregar")
             print("3. Modificar")
             print("4. Eliminar")
+            print("5. Lista bimonetaria")
+            print("6. Exportar CSV")
             print("0. Volver")
 
             opcion = input("\nOpcion: ")
 
-            if opcion == "1":
-                self.listar_precio()
+            if opcion == "1": self.listar_precio()
 
-            elif opcion == "2":
-                self.agregar_precio()
+            elif opcion == "2": self.agregar_precio()
 
-            elif opcion == "3":
-                self.modificar_precio()
+            elif opcion == "3": self.modificar_precio()
 
-            elif opcion == "4":
-                self.eliminar_precio()
+            elif opcion == "4": self.eliminar_precio()
 
-            elif opcion == "0":
-                break
+            elif opcion == "5": self.lista_bimonetaria()
 
-            else:
-                print("Opcion invalida")
+            elif opcion == "6": self.exportar_precios_csv()
+
+            elif opcion == "0": break
+
+            else: print("Opcion invalida")
 
 
 #Seccion CRUD Precios
@@ -873,9 +788,6 @@ class ConsoleUI:
             )
 
             self.precio_service.crear(precio)
-            guardar_todos_los_precios(
-            self.precio_service.listar()
-            )
 
 
             print("\nPrecio agregado correctamente")
@@ -924,9 +836,6 @@ class ConsoleUI:
             self.precio_service.actualizar(
                 precio
             )
-            guardar_todos_los_precios(
-            self.precio_service.listar()
-            )
 
             print(
                 "\nPrecio actualizado correctamente"
@@ -947,9 +856,6 @@ class ConsoleUI:
             eliminado = (
                 self.precio_service.eliminar(id_)
             )
-            guardar_todos_los_precios(
-            self.precio_service.listar()
-            )
 
             if eliminado:
                 print("\nPrecio eliminado")
@@ -960,7 +866,69 @@ class ConsoleUI:
             print(f"\nError: {e}")
 
 
+    def lista_bimonetaria(self):
+        print("\n=== LISTA BIMONETARIA ===\n")
+        cotizaciones = (
+            self.cotizacion_service.listar()
+        )
+        if not cotizaciones:
+            print("No existen cotizaciones cargadas.")
+            return
 
+        cotizacion = cotizaciones[0]
+        for precio in self.precio_service.listar():
+            libro = self.libro_service.obtener_por_id(
+                precio.libro_id
+            )
+            ars = precio.valor
+            usd = (ars / cotizacion.valor)
+
+            print(f"{libro.titulo}")
+            print(f"ARS: ${ars:.2f}")
+            print(f"USD: U$S {usd:.2f}")
+            print("-" * 30)
+
+    def exportar_precios_csv(self):
+        cotizaciones = self.cotizacion_service.listar()
+        if not cotizaciones:
+            print("No existen cotizaciones disponibles.")
+            return
+
+        cotizacion = cotizaciones[0]
+
+        with open("book_manager/migrations/csv/precios_bimonetarios.csv",
+                  mode="w",
+                  newline="",
+                  encoding="utf-8-sig"
+                  )as archivo:
+            
+            writer = csv.writer(archivo)
+            writer.writerow(
+                [
+                    "Titulo",
+                    "ARS",
+                    "USD"
+                ]
+            )
+            for precio in self.precio_service.listar():
+                libro = self.libro_service.obtener_por_id(
+                    precio.libro_id
+                )
+                ars = precio.valor
+                usd = ars / cotizacion.valor
+                writer.writerow(
+                    [
+                        libro.titulo,
+                        round(ars, 2),
+                        round(usd, 2)
+                    ]
+                )
+        print(
+            "\nArchivo precios_bimonetarios.csv generado correctamente."
+        )
+
+
+#**************************************************************************
 #**************************************************************************
 #Menu con opciones de la seccion tipo de cotizaciones
 
@@ -979,23 +947,17 @@ class ConsoleUI:
 
             opcion = input("\nOpcion: ")
 
-            if opcion == "1":
-                self.listar_tipos_cotizacion()
+            if opcion == "1": self.listar_tipos_cotizacion()
 
-            elif opcion == "2":
-                self.agregar_tipo_cotizacion()
+            elif opcion == "2": self.agregar_tipo_cotizacion()
 
-            elif opcion == "3":
-                self.modificar_tipo_cotizacion()
+            elif opcion == "3": self.modificar_tipo_cotizacion()
 
-            elif opcion == "4":
-                self.eliminar_tipo_cotizacion()
+            elif opcion == "4": self.eliminar_tipo_cotizacion()
 
-            elif opcion == "0":
-                break
+            elif opcion == "0": break
 
-            else:
-                print("Opcion invalida")
+            else: print("Opcion invalida")
 
 #Seccion CRUD Tipo de Cotizacion
 
@@ -1012,7 +974,7 @@ class ConsoleUI:
             )
 
             self.tipo_service.crear(tipo)
-
+            
             print(
                 "\nTipo de cotizacion agregado correctamente"
             )
@@ -1085,7 +1047,7 @@ class ConsoleUI:
             print(f"\nError: {e}")
 
 
-
+#**************************************************************************
 #**************************************************************************
 #Menu con opciones de la seccion stock
 
@@ -1104,23 +1066,17 @@ class ConsoleUI:
 
             opcion = input("\nOpcion: ")
 
-            if opcion == "1":
-                self.listar_stock()
+            if opcion == "1": self.listar_stock()
 
-            elif opcion == "2":
-                self.agregar_stock()
+            elif opcion == "2": self.agregar_stock()
 
-            elif opcion == "3":
-                self.modificar_stock()
+            elif opcion == "3": self.modificar_stock()
 
-            elif opcion == "4":
-                self.eliminar_stock()
+            elif opcion == "4": self.eliminar_stock()
 
-            elif opcion == "0":
-                break
+            elif opcion == "0": break
 
-            else:
-                print("Opcion invalida")
+            else: print("Opcion invalida")
 
 
 #Seccion CRUD Stock
@@ -1191,7 +1147,7 @@ class ConsoleUI:
             eliminado = (
                 self.stock_service.eliminar(libro_id)
             )
-
+            
             if eliminado:
                 print("\nStock eliminado")
             else:
@@ -1202,6 +1158,7 @@ class ConsoleUI:
 
 
 
+#**************************************************************************
 #**************************************************************************
 #Menu con opciones de la seccion cotizacion
 
@@ -1216,27 +1173,25 @@ class ConsoleUI:
             print("2. Agregar")
             print("3. Modificar")
             print("4. Eliminar")
+            print("5. Actualizar desde API")
             print("0. Volver")
 
             opcion = input("\nOpcion: ")
 
-            if opcion == "1":
-                self.listar_cotizaciones()
+            if opcion == "1": self.listar_cotizaciones()
 
-            elif opcion == "2":
-                self.agregar_cotizacion()
+            elif opcion == "2": self.agregar_cotizacion()
 
-            elif opcion == "3":
-                self.modificar_cotizacion()
+            elif opcion == "3": self.modificar_cotizacion()
 
-            elif opcion == "4":
-                self.eliminar_cotizacion()
+            elif opcion == "4": self.eliminar_cotizacion()
 
-            elif opcion == "0":
-                break
+            elif opcion == "5": self.actualizar_cotizaciones_api()
 
-            else:
-                print("Opcion invalida")
+            elif opcion == "0": break
+
+            else: print("Opcion invalida")
+
 
 #Seccion CRUD Cotizaciones
 
@@ -1262,10 +1217,8 @@ class ConsoleUI:
                 valor=valor
             )
 
-            self.cotizacion_service.crear(
-                cotizacion
-            )
-
+            self.cotizacion_service.crear(cotizacion)
+            
             print(
                 "\nCotizacion agregada correctamente"
             )
@@ -1314,9 +1267,7 @@ class ConsoleUI:
                     valor
                 )
 
-            self.cotizacion_service.actualizar(
-                cotizacion
-            )
+            self.cotizacion_service.actualizar(cotizacion)
 
             print(
                 "\nCotizacion actualizada"
@@ -1363,3 +1314,20 @@ class ConsoleUI:
 
         except Exception as e:
             print(f"\nError: {e}")
+
+
+    def actualizar_cotizaciones_api(self):
+
+        try:
+            cantidad = (
+                self.cotizacion_service
+                .actualizar_desde_api()
+            )
+            print(
+                f"\nSe procesaron "
+                f"{cantidad} cotizaciones."
+            )
+        except Exception as e:
+            print(
+                f"\nError: {e}"
+            )

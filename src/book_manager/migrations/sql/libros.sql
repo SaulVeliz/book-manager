@@ -1,0 +1,11 @@
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('1', '978950001', 'Clean Code', 'Robert Martin', '1', '8');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('2', '978950002', 'Redes Modernas', 'Andrew Tanenbaum', '4', '6');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('3', '978950003', 'Hacking Etico', 'Kevin Mitnick', '3', '7');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('4', '978950004', 'Python para Todos', 'Charles Severance', '1', '9');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('5', '978950005', 'Machine Learning', 'Tom Mitchell', '5', '3');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('6', '978950006', 'Data Science Handbook', 'Jake VanderPlas', '6', '5');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('7', '978950007', 'Linux Administration', 'Evi Nemeth', '7', '2');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('8', '978950008', 'Cloud Computing', 'Thomas Erl', '9', '1');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('9', '978950009', 'Docker y Kubernetes', 'Nigel Poulton', '10', '4');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('10', '978950010', 'Desarrollo Web Moderno', 'Jon Duckett', '8', '10');
+INSERT INTO libros (id, isbn, titulo, autor, genero_id, editorial_id) VALUES ('12', '123456789', 'Eliminar', 'Eliminar', '5', '5');

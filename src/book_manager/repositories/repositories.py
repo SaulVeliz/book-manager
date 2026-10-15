@@ -157,36 +157,30 @@ class CotizacionDolarRepository:
     def __init__(self):
         self._datos = {}
 
-    def crear(self, cotizacion: CotizacionDolar):
+    def leer_todos(self):
+        with self.db.get_session() as session:
 
-        clave = (
-            cotizacion.tipo_id,
-            cotizacion.fecha
+            return session.query(
+                CotizacionDolarModel
+            ).all()
+
+    def crear(self,cotizacion):
+
+        cotizacion_model = CotizacionDolarModel(
+            tipo_id=cotizacion.tipo_id,
+            fecha=cotizacion.fecha,
+            valor=cotizacion.valor
+        )
+        with self.db.get_session() as session:
+            session.add(cotizacion_model)
+            return cotizacion_model
+
+    def leer_por_tipo_y_fecha(self,tipo_id,fecha):
+
+        return self._datos.get((tipo_id, fecha)
         )
 
-        if clave in self._datos:
-            raise ValueError(
-                "La cotizacion ya existe"
-            )
-
-        self._datos[clave] = cotizacion
-
-        return cotizacion
-
-    def leer_por_tipo_y_fecha(
-        self,
-        tipo_id,
-        fecha
-    ):
-
-        return self._datos.get(
-            (tipo_id, fecha)
-        )
-
-    def leer_historico_por_tipo(
-        self,
-        tipo_id
-    ):
+    def leer_historico_por_tipo(self,tipo_id):
 
         return [
             c
@@ -194,30 +188,24 @@ class CotizacionDolarRepository:
             if c.tipo_id == tipo_id
         ]
 
-    def actualizar(
-        self,
-        cotizacion
-    ):
+    def actualizar(self,cotizacion):
+        with self.db.get_session() as session:
 
-        clave = (
-            cotizacion.tipo_id,
-            cotizacion.fecha
-        )
-
-        if clave not in self._datos:
-            raise ValueError(
-                "La cotizacion no existe"
+            cotizacion_model = session.get(
+                CotizacionDolarModel,
+                (
+                    cotizacion.tipo_id,
+                    cotizacion.fecha
+                )
             )
 
-        self._datos[clave] = cotizacion
+            if cotizacion_model:
 
-        return cotizacion
+                cotizacion_model.valor = cotizacion.valor
 
-    def eliminar(
-        self,
-        tipo_id,
-        fecha
-    ):
+            return cotizacion_model
+
+    def eliminar(self,tipo_id,fecha):
 
         clave = (tipo_id, fecha)
 
