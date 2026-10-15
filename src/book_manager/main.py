@@ -52,36 +52,20 @@ def main():
 #*****************************************************
 
     libro_service = LibroService(libro_repo)
-    #for libro in cargar_libros():
-    #        libro_service.crear(libro)
             
     genero_service = GeneroService(genero_repo)
-    #for genero in cargar_generos():
-    #        genero_service.crear(genero)
 
     editorial_service = EditorialService(editorial_repo)
-    #for editorial in cargar_editoriales():
-    #        editorial_service.crear(editorial)
 
     moneda_service = MonedaService(moneda_repo)
-    #for moneda in cargar_monedas():
-    #       moneda_service.crear(moneda)
 
     precio_service = PrecioService(precio_repo)
-    #for precio in cargar_precios():
-    #        precio_service.crear(precio)
 
     tipo_service = TipoCotizacionService(tipo_repo)
-    #for tipo in cargar_tipos_cotizacion():
-    #        tipo_service.crear(tipo)
 
     stock_service = StockService(stock_repo)
-    #for stock in cargar_stock():
-    #            stock_service.crear(stock)
 
     cotizacion_service = CotizacionDolarService(cotizacion_repo)
-    #for cotizacion in cargar_cotizaciones():
-    #    cotizacion_service.crear(cotizacion)
 
    
 
