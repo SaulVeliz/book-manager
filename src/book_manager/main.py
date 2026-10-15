@@ -36,17 +36,6 @@ from book_manager.ui.console import (
     ConsoleUI
 )
 
-from book_manager.preload_data.csv_data import (
-    cargar_generos,
-    cargar_editoriales,
-    cargar_monedas,
-    cargar_libros,
-    cargar_precios,
-    cargar_stock,
-    cargar_tipos_cotizacion,
-    cargar_cotizaciones
-)
-
 
 def main():
 
