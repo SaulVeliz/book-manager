@@ -1,4 +1,4 @@
-
+from datetime import date
 import csv
 from book_manager.entities.entities import (
     Genero,
@@ -6,7 +6,9 @@ from book_manager.entities.entities import (
     Moneda,
     Libro,
     Precio,
-    Stock
+    Stock,
+    TipoCotizacion,
+    CotizacionDolar
 )
 
 ARCHIVO = "book_manager/migrations/csv/generos.csv"
@@ -15,9 +17,13 @@ ARCHIVO_MONEDAS = ("book_manager/migrations/csv/monedas.csv")
 ARCHIVO_LIBROS = ("book_manager/migrations/csv/libros.csv")
 ARCHIVO_PRECIOS = ("book_manager/migrations/csv/precios.csv")
 ARCHIVO_STOCK = ("book_manager/migrations/csv/stock.csv")
+ARCHIVO_TIPOS_COTIZACION = ("book_manager/migrations/csv/tipos_cotizacion.csv")
+ARCHIVO_COTIZACIONES = ("book_manager/migrations/csv/cotizaciones.csv")
 
 
-#funciones CRUD Libro
+#***********************************************************************************
+#***********************************************************************************
+# #funciones CRUD Libro
 
 def cargar_libros():
 
@@ -29,9 +35,7 @@ def cargar_libros():
         encoding="utf-8-sig"
     ) as archivo:
 
-        lector = csv.DictReader(
-            archivo
-        )
+        lector = csv.DictReader(archivo)
 
         for fila in lector:
 
@@ -52,6 +56,7 @@ def cargar_libros():
 
     return libros
 
+
 def guardar_todos_los_libros(
     libros
 ):
@@ -63,9 +68,7 @@ def guardar_todos_los_libros(
         encoding="utf-8-sig"
     ) as archivo:
 
-        writer = csv.writer(
-            archivo
-        )
+        writer = csv.writer(archivo)
 
         writer.writerow(
             [
@@ -92,6 +95,8 @@ def guardar_todos_los_libros(
             )
 
 
+#***********************************************************************************
+#***********************************************************************************
 #funciones CRUD Genero
 
 def guardar_genero(id_, nombre, descripcion):
@@ -169,6 +174,8 @@ def guardar_todos_los_generos(generos):
             )
 
 
+#***********************************************************************************
+#***********************************************************************************
 #funciones CRUD Editoriales
 
 def cargar_editoriales():
@@ -229,6 +236,9 @@ def guardar_todas_las_editoriales(
                 ]
             )
 
+
+#***********************************************************************************
+#***********************************************************************************
 #funciones CRUD Monedas
 
 def cargar_monedas():
@@ -268,9 +278,7 @@ def guardar_todas_las_monedas(
         encoding="utf-8-sig"
     ) as archivo:
 
-        writer = csv.writer(
-            archivo
-        )
+        writer = csv.writer(archivo)
 
         writer.writerow(
             [
@@ -293,6 +301,8 @@ def guardar_todas_las_monedas(
             )
 
 
+#***********************************************************************************
+#***********************************************************************************
 #funciones CRUD Precios
 
 def cargar_precios():
@@ -305,9 +315,7 @@ def cargar_precios():
         encoding="utf-8-sig"
     ) as archivo:
 
-        lector = csv.DictReader(
-            archivo
-        )
+        lector = csv.DictReader(archivo)
 
         for fila in lector:
 
@@ -340,9 +348,7 @@ def guardar_todos_los_precios(
         encoding="utf-8-sig"
     ) as archivo:
 
-        writer = csv.writer(
-            archivo
-        )
+        writer = csv.writer(archivo)
 
         writer.writerow(
             [
@@ -364,6 +370,64 @@ def guardar_todos_los_precios(
                 ]
             )
 
+
+#***********************************************************************************
+#***********************************************************************************
+#funciones CRUD Tipo de Cotizaciones
+
+def cargar_tipos_cotizacion():
+
+    tipos = []
+
+    with open(
+        ARCHIVO_TIPOS_COTIZACION,
+        mode="r",
+        encoding="utf-8-sig"
+    ) as archivo:
+
+        lector = csv.DictReader(archivo)
+
+        for fila in lector:
+
+            tipos.append(
+                TipoCotizacion(
+                    id=int(fila["id"]),
+                    nombre=fila["nombre"]
+                )
+            )
+
+    return tipos
+
+
+def guardar_todos_los_tipos_cotizacion(
+    tipos
+):
+
+    with open(
+        ARCHIVO_TIPOS_COTIZACION,
+        mode="w",
+        newline="",
+        encoding="utf-8-sig"
+    ) as archivo:
+
+        writer = csv.writer(archivo)
+
+        writer.writerow(
+            ["id", "nombre"]
+        )
+
+        for tipo in tipos:
+
+            writer.writerow(
+                [
+                    tipo.id,
+                    tipo.nombre
+                ]
+            )
+
+
+#***********************************************************************************
+#***********************************************************************************
 #funciones CRUD Stock
 
 def cargar_stock():
@@ -376,9 +440,7 @@ def cargar_stock():
         encoding="utf-8-sig"
     ) as archivo:
 
-        lector = csv.DictReader(
-            archivo
-        )
+        lector = csv.DictReader(archivo)
 
         for fila in lector:
 
@@ -394,3 +456,98 @@ def cargar_stock():
             )
 
     return stocks
+
+
+def guardar_todos_los_stock(stocks):
+
+    with open(
+        ARCHIVO_STOCK,
+        mode="w",
+        newline="",
+        encoding="utf-8-sig"
+    ) as archivo:
+
+        writer = csv.writer(archivo)
+
+        writer.writerow(
+            [
+                "libro_id",
+                "cantidad"
+            ]
+        )
+
+        for stock in stocks:
+
+            writer.writerow(
+                [
+                    stock.libro_id,
+                    stock.cantidad
+                ]
+            )
+
+
+#***********************************************************************************
+#***********************************************************************************
+#funciones CRUD Cotizaciones Dolar
+
+def cargar_cotizaciones():
+
+    cotizaciones = []
+
+    with open(
+        ARCHIVO_COTIZACIONES,
+        mode="r",
+        encoding="utf-8-sig"
+    ) as archivo:
+
+        lector = csv.DictReader(archivo)
+
+        for fila in lector:
+
+            cotizaciones.append(
+                CotizacionDolar(
+                    tipo_id=int(
+                        fila["tipo_id"]
+                    ),
+                    fecha=date.fromisoformat(
+                        fila["fecha"]
+                    ),
+                    valor=float(
+                        fila["valor"]
+                    )
+                )
+            )
+
+    return cotizaciones
+
+
+def guardar_todas_las_cotizaciones(
+    cotizaciones
+):
+
+    with open(
+        ARCHIVO_COTIZACIONES,
+        mode="w",
+        newline="",
+        encoding="utf-8-sig"
+    ) as archivo:
+
+        writer = csv.writer(archivo)
+
+        writer.writerow(
+            [
+                "tipo_id",
+                "fecha",
+                "valor"
+            ]
+        )
+
+        for cotizacion in cotizaciones:
+
+            writer.writerow(
+                [
+                    cotizacion.tipo_id,
+                    cotizacion.fecha,
+                    cotizacion.valor
+                ]
+            )
